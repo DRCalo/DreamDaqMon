@@ -94,7 +94,7 @@ class DrMon:
 
     self.histoMap[ "MuonTrk" ] = "adc-32"
     self.histoMap[ "Cheren1" ] = "adc-33"
-    self.histoMap[ "Cheren2" ] = "adc-34"
+    self.histoMap[ "Cheren2" ] = "adc-36"
     self.histoMap[ "Cheren3" ] = "adc-35"
     self.histoMap[ "PreShow" ] = "adc-16"
     
@@ -129,9 +129,14 @@ class DrMon:
     return h
   
   ##### DrMon method #######
-  def book2D(self, hname, bins, mi, ma, axTitle="", ayTitle=""):
+  def book2D(self, hname, bins, mi, ma, axTitle="", ayTitle="", bins2 = -1000, mi2 = -1000, ma2 = -1000):
+
     '''Utility to book histograms 2D '''
-    h = ROOT.TH2I(hname, hname, bins, mi, ma, bins, mi, ma) 
+    if bins2 == -1000:
+      bins2 = bins
+      mi2 = mi
+      ma2 = ma
+    h = ROOT.TH2I(hname, hname, bins, mi, ma, bins2, mi2, ma2) 
     self.hDict[hname] = h
     h.GetXaxis().SetTitle(axTitle)
     h.GetYaxis().SetTitle(ayTitle)
@@ -209,6 +214,14 @@ class DrMon:
     self.book1D( "trMask", 8, -0.5, 7.5)
     self.book2D( "pre/muon", 4096, 0, 4096, "preshower [adcCounts]",  "muonTraker [adcCounts]")
     self.book2D( "chere1/2", 4096, 0, 4096, "Cherenkov1 [adcCounts]", "Cherenkov2 [adcCounts]")
+    self.book2D( "chere1/pre", 4096, 0, 4096, "Cherenkov1 [adcCounts]", "PreShower [adcCounts]")
+    self.book2D( "chere2/pre", 4096, 0, 4096, "Cherenkov2 [adcCounts]", "PreShower [adcCounts]")
+    self.book2D( "pre/x1", 4096, 0, 4096, "PreShower [adcCounts]", "x1 [mm]", 60,-30,30)
+    self.book2D( "pre/x2", 4096, 0, 4096, "PreShower [adcCounts]", "x2 [mm]", 60,-30,30)
+    self.book2D( "pre/y1", 4096, 0, 4096, "PreShower [adcCounts]", "y1 [mm]", 60,-30,30)
+    self.book2D( "pre/y2", 4096, 0, 4096, "PreShower [adcCounts]", "y2 [mm]", 60,-30,30)
+
+
      
 
   ##### DrMon method #######
@@ -266,7 +279,9 @@ class DrMon:
     # Others
     self.hDict["trMask"].Fill(event.TriggerMask)
     self.hDict["pre/muon"].Fill( event.ADCs[16],  event.ADCs[32])
-    self.hDict["chere1/2"].Fill( event.ADCs[33],  event.ADCs[34])
+    self.hDict["chere1/2"].Fill( event.ADCs[33],  event.ADCs[36])
+    self.hDict["chere1/pre"].Fill( event.ADCs[33],  event.ADCs[16])
+    self.hDict["chere2/pre"].Fill( event.ADCs[36],  event.ADCs[16])
 
     # ADC
     for ch, val in event.ADCs.items():
@@ -319,10 +334,19 @@ class DrMon:
         self.hDict[ 'dw%d%s-%s' %  (i/4 +1, a, b ) ].Fill( vA - vB)
         self.hDict[ 'dw%d%s/%s' %  (i/4 +1, a, b ) ].Fill( vA , vB)
         dwcvect.append(vA-vB)
+
+    x1 = None
+    x2 = None
+    y1 = None
+    y2 = None
+    k = None 
+
     if len(dwcvect) == 4:
       k = mm_ns * ns_TdcCounts
-      x1, y1 = dwcvect[0], dwcvect[1]
-      x2, y2 = dwcvect[2], dwcvect[3] 
+      x1 = dwcvect[0]
+      y1 = dwcvect[1]
+      x2 = dwcvect[2]
+      y2 = dwcvect[3] 
       self.hDict['dw1XY'].Fill(x1, y1)
       self.hDict['dw2XY'].Fill(x2, y2)
       self.hDict['dw1XY_mm'].Fill(x1*k, y1*k)
@@ -331,6 +355,12 @@ class DrMon:
       self.hDict['dwy1/y2' ].Fill(y1, y2)
       self.hDict['dwx1-x2' ].Fill(x1*k - x2*k)
       self.hDict['dwy1-y2' ].Fill(y1*k - y2*k)
+
+    if (k != None):
+      self.hDict['pre/x1'].Fill( event.ADCs[16], x1*k)
+      self.hDict['pre/y1'].Fill( event.ADCs[16], y1*k)
+      self.hDict['pre/x2'].Fill( event.ADCs[16], x2*k)
+      self.hDict['pre/y2'].Fill( event.ADCs[16], y2*k)
      
 
   ##### DrMon method #######

@@ -60,7 +60,7 @@ def DRdecode(evLine):
   try:
     e.TriggerMask = int( hList[14], 16 )
   except ValueError:
-    print 'ERROR: INVALID TRIGGER MASK:', hList[14] 
+    print('ERROR: INVALID TRIGGER MASK: ' + hList[14]) 
     e.TriggerMask = 0xFFFFFFFF 
    
   # Parse ADC 
@@ -76,10 +76,10 @@ def DRdecode(evLine):
   try: entries  =  int(strTDCs.split()[2], 10)
   except ValueError: 
     # In the 1st runs the TCD size was exadecimal, then it was changed in decimal
-    print "WARNING: TCD size not in decimal format, trying exadecimal"
+    print("WARNING: TCD size not in decimal format, trying exadecimal")
     try: entries  =  int(strTDCs.split()[2], 16)
     except ValueError: 
-      print "WARNING: TCD size with unknown format."
+      print ("WARNING: TCD size with unknown format.")
       pass
      
 
@@ -100,7 +100,7 @@ def DRdecode(evLine):
 if __name__ == "__main__":
   import sys
   if len(sys.argv) < 2:
-    print "Usage:", sys.argv[0], "filename [v=verbose]"
+    print ("Usage:" + sys.argv[0] + "filename [v=verbose]")
     sys.exit(1)
  
   verbose = False
@@ -110,8 +110,8 @@ if __name__ == "__main__":
     ev = DRdecode(line)
     if verbose:
       if i%30 == 0:
-        print ev.headLine()
-      print ev
+        print(ev.headLine())
+      print(ev)
     
 
   

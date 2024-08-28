@@ -1,15 +1,7 @@
 # Conversion fron ascii data format to DREvent class
 
-'''
-New DREvent class for 2023 test-beam. The header of the event contains four more words than it used to in 2021. For the moment this version of the DREvent class simply shifts the reading of the header to read off the same contents than the 2021 data
- 
-TO BE DONE: implement teh readout of teh four new words
- 
-'''
-
-
 class DREvent:
-  ''' Class that represent a Dual Readout event at TB 2021 @H8 '''
+  ''' Class that represent a Dual Readout event at TB 2024 @H8 '''
   
   def __init__(self):
     ''' Constructor '''
@@ -109,6 +101,7 @@ if __name__ == "__main__":
   import sys
   if len(sys.argv) < 2:
     print "Usage:", sys.argv[0], "filename [v=verbose]"
+    sys.exit(1)
  
   verbose = False
   if len(sys.argv) == 3:

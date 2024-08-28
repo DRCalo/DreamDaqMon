@@ -1,15 +1,7 @@
 # Conversion fron ascii data format to DREvent class
 
-'''
-New DREvent class for 2023 test-beam. The header of the event contains four more words than it used to in 2021. For the moment this version of the DREvent class simply shifts the reading of the header to read off the same contents than the 2021 data
- 
-TO BE DONE: implement teh readout of teh four new words
- 
-'''
-
-
 class DREvent:
-  ''' Class that represent a Dual Readout event at TB 2021 @H8 '''
+  ''' Class that represent a Dual Readout event at TB 2024 @H8 '''
   
   def __init__(self):
     ''' Constructor '''
@@ -68,36 +60,38 @@ def DRdecode(evLine):
   try:
     e.TriggerMask = int( hList[14], 16 )
   except ValueError:
-    print( 'ERROR: INVALID TRIGGER MASK:', hList[14] )
+    print 'ERROR: INVALID TRIGGER MASK:', hList[14] 
     e.TriggerMask = 0xFFFFFFFF 
    
   # Parse ADC 
   listADCs = strADCs.split()
-  for i in range(0, len(listADCs), 2):
-    ch = int(listADCs[i]  , 10)
-    val= int(listADCs[i+1], 16)
-    e.ADCs[ch]=val 
+  for i in range(len(listADCs)):
+    if i%2 ==0:
+      ch = int(listADCs[i]  , 10)
+      val= int(listADCs[i+1], 16)
+      e.ADCs[ch]=val 
 
   # Parse TDC  
   entries  = -1
   try: entries  =  int(strTDCs.split()[2], 10)
   except ValueError: 
     # In the 1st runs the TCD size was exadecimal, then it was changed in decimal
-    print( "WARNING: TCD size not in decimal format, trying exadecimal")
+    print "WARNING: TCD size not in decimal format, trying exadecimal"
     try: entries  =  int(strTDCs.split()[2], 16)
     except ValueError: 
-      print( "WARNING: TCD size with unknown format.")
+      print "WARNING: TCD size with unknown format."
       pass
      
 
   strTDCs  = strTDCs[ strTDCs.find("val.s") + 6 : ]
   listTDCs = strTDCs.split()
   if entries > 0:
-    for i in range(0, len(listTDCs), 3):
-      ch  = int( listTDCs[i+0], 10 )  # Channel
-      ver = int( listTDCs[i+1], 10 )  # Varification number
-      val = int( listTDCs[i+2], 10 )  # Value
-      e.TDCs[ch] = ( val, ver) 
+    for i in range(len(listTDCs)):
+      if i%3 ==0:
+        ch  = int( listTDCs[i+0], 10 )  # Channel
+        ver = int( listTDCs[i+1], 10 )  # Varification number
+        val = int( listTDCs[i+2], 10 )  # Value
+        e.TDCs[ch] = ( val, ver) 
  
   return e
 
@@ -106,7 +100,8 @@ def DRdecode(evLine):
 if __name__ == "__main__":
   import sys
   if len(sys.argv) < 2:
-    print( "Usage:", sys.argv[0], "filename [v=verbose]")
+    print "Usage:", sys.argv[0], "filename [v=verbose]"
+    sys.exit(1)
  
   verbose = False
   if len(sys.argv) == 3:
@@ -115,8 +110,8 @@ if __name__ == "__main__":
     ev = DRdecode(line)
     if verbose:
       if i%30 == 0:
-        print( ev.headLine())
-      print( ev)
+        print ev.headLine()
+      print ev
     
 
   

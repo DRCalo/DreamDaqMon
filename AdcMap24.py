@@ -31,11 +31,11 @@ class ADC:
       'pedestal':self.pedestal
       }
 
-
 # ADC map
 #  - key:   Physical Channel Name, ie: name of the channel for reconstruction
 #  - value: object of class ADC
 adcMapDictionary = OrderedDict([
+  # S-Channels
   ( "TS55", ADC(  3, "M1-S4", 41, 0 ) ),  ( "TS54", ADC(  7, "M2-S4", 42, 0) ),  ( "TS53", ADC( 11, "M3-S4", 43, 0) ),    # <--- Ring 4
   ( "TS45", ADC(  2, "M1-S3", 31, 0 ) ),  ( "TS44", ADC(  6, "M2-S3", 32, 0) ),  ( "TS43", ADC( 10, "M3-S3", 33, 0) ),    # <--- Ring 3
   ( "TS35", ADC(  1, "M1-S2", 21, 0 ) ),  ( "TS34", ADC(  5, "M2-S2", 22, 0) ),  ( "TS33", ADC(  9, "M3-S2", 23, 0) ),    # <--- Ring 2
@@ -49,6 +49,7 @@ adcMapDictionary = OrderedDict([
   ( "TS50", ADC( 25, "M7-S2", 47, 0 ) ),  ( "TS51", ADC( 29, "M8-S2", 48, 0) ),  ( "TS52", ADC( 66, "M9-S3", 49, 0) ),    # <--- Ring 4
   ( "TS60", ADC( 24, "M7-S1", 57, 0 ) ),  ( "TS61", ADC( 28, "M8-S1", 58, 0) ),  ( "TS62", ADC( 67, "M9-S4", 59, 0) ),    # <--- Ring 5
                                                                                              
+  # C-Channels
   ( "TC55", ADC( 35, "M1-C4", 41, 0 ) ),  ( "TC54", ADC( 39, "M2-C4", 42, 0) ),  ( "TC53", ADC( 43, "M3-C4", 43, 0) ),    # <--- Ring 4
   ( "TC45", ADC( 34, "M1-C3", 31, 0 ) ),  ( "TC44", ADC( 38, "M2-C3", 32, 0) ),  ( "TC43", ADC( 42, "M3-C3", 33, 0) ),    # <--- Ring 3
   ( "TC35", ADC( 33, "M1-C2", 21, 0 ) ),  ( "TC34", ADC( 37, "M2-C2", 22, 0) ),  ( "TC33", ADC( 41, "M3-C2", 23, 0) ),    # <--- Ring 2
@@ -62,12 +63,21 @@ adcMapDictionary = OrderedDict([
   ( "TC50", ADC( 57, "M7-C2", 47, 0 ) ),  ( "TC51", ADC( 61, "M8-C2", 48, 0) ),  ( "TC52", ADC( 70, "M9-C3", 49, 0) ),    # <--- Ring 4
   ( "TC60", ADC( 56, "M7-C1", 57, 0 ) ),  ( "TC61", ADC( 60, "M8-C1", 58, 0) ),  ( "TC62", ADC( 71, "M9-C4", 59, 0) ),    # <--- Ring 5
 
+  # Ancillary
   ( "PreSh" , ADC( 72, "PreSh" ) ),
-  ( "TailC" , ADC( 97, "TileC" ) ),
-  ( "MuonT" , ADC( 98, "MuonT" ) ),
-  ( "Cher1" , ADC( 99, "Cher1" ) ),
-  ( "Cher2" , ADC(100, "Cher2" ) ),
-  ( "Cher3" , ADC(101, "Cher3" ) ),
+  ( "TailC" , ADC( 96, "TileC" ) ),
+  ( "MuonT" , ADC( 97, "MuonT" ) ),
+  ( "Cher1" , ADC(101, "Cher1" ) ), # Channel 98 no working 
+  ( "Cher2" , ADC( 99, "Cher2" ) ),
+  ( "Cher3" , ADC(100, "Cher3" ) ),
+
+  #                                                            |Beam
+  # Leakage counters                                           |
+  # Bottom                          Left (Saleve)              V    Top                             Right (Jura)
+  ( "L04", ADC(114, "Leak04" ) ), ( "L03", ADC(113, "Leak03" ) ),                                 ( "L02", ADC(112, "Leak02" ) ),
+  ( "L09", ADC(118, "Leak09" ) ), ( "L08", ADC(117, "Leak08" ) ), ( "L07", ADC(116, "Leak07" ) ), ( "L05", ADC(115, "Leak05" ) ), 
+  ( "L13", ADC(122, "Leak13" ) ), ( "L12", ADC(121, "Leak12" ) ), ( "L11", ADC(120, "Leak11" ) ), ( "L10", ADC(119, "Leak10" ) ),
+  ( "L20", ADC(126, "Leak20" ) ), ( "L16", ADC(125, "Leak16" ) ), ( "L15", ADC(124, "Leak15" ) ), ( "L14", ADC(123, "Leak14" ) ),
 ])
 
 
@@ -89,7 +99,7 @@ class AdcMap:
     '''From value (i.e. module name or address) to key (the channel name)'''
     for key, value in list(self.theDict.items()):
       if value.module == val or value.addr == val:
-        return key
+	return key
 
   def getPedestalFromAddress(self, addr):
     '''Get pedestal value from address'''

@@ -1,5 +1,7 @@
 # Conversion fron ascii data format to DREvent class
 
+import decode_utils as bob
+
 class DREvent:
   ''' Class that represent a Dual Readout event at TB 2024 @H8 '''
   
@@ -35,8 +37,11 @@ class DREvent:
     """get the data value for TDC channel ch"""
     return self.TDCs[ch]  # Tuple: (value, check)
 
-# Parse the evLine and return a DREvent object
-def DRdecode(evLine):
+
+
+
+# Parse the evLine and return a DREvent object -- Data format up to 2024
+def DRdecode24(evLine):
   """Function that converts a raw data record (event) from
      ascii to object oriented representation: DREvent class"""
   # Create new DREvent
@@ -94,6 +99,50 @@ def DRdecode(evLine):
         e.TDCs[ch] = ( val, ver) 
  
   return e
+
+
+# Parse the evLine and return a DREvent object -- Raw data format since 
+def DRdecode25(evLine):
+  """Function that converts a raw data record (event) from
+     ascii to object oriented representation: DREvent class"""
+  # Create new DREvent
+  e = DREvent()
+
+  valid, header, adc, tdc = bob.decodeblock(evLine)
+
+  if valid:
+    print("Decoding error evt %d id %d %s - returning empty event" %(-1, valid, bob.DecErr[valid]))
+    return e
+
+  # Parse header
+  e.EventNumber = int( header["evtnumber"] )
+  e.EventTime = header["evttime"]
+  e.SpillNumber = int( header["spillnumber"] )
+  e.NumOfPhysEv = int( header["nphys"] )
+  e.NumOfPedeEv = int( header["nped"] )
+  e.NumOfSpilEv = int( header["nevt"] )
+
+  e.TriggerMask = int( header["trigmask"] )
+  
+  # Parse ADC 
+  for chan in adc:
+    e.ADCs[chan] = adc[chan]
+
+  # TODO what is check number of TDCs? Setting to 1 now
+  # Parse TDC
+  for chan in tdc:
+    e.TDCs[chan] = (tdc[chan], 1)
+
+    
+  return e
+
+# Wrapper for compatibility with two data format
+def DRdecode(evLine, spec='2025'):
+
+  if spec == '2025':
+    return DRdecode25(evLine)
+  else:
+    return DRdecode24(evLine)
 
 
 # Main for testing purpose

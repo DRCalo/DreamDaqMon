@@ -161,7 +161,7 @@ def decodeblock(line, verb = False): # line is a single string for one event
             if v:
                 valid.append(v)
     
-            chan = (crate-1)*32 + w["c"]
+            chan = crate*32 + w["c"]
             
             if isQDC:
                 if chan in adcset:

@@ -110,6 +110,7 @@ def DRdecode25(evLine, verbose):
 
   valid, header, adc, tdc = bob.decodeblock(evLine, verbose)
 
+  
   if valid:
     try:
       evtnumber = header["evtnumber"]

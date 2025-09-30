@@ -3,15 +3,40 @@
 
 import re
 
-DecErr = {1: "Invalid header",
-          6: "Invalid trailer",
-          2: "Invalid data spec 1",
-          5: "Invalid data spec 4",
-          999: "Invalid data type flag",
-          111: "Channel already seen",
-          254: "Unexpected 0xFE word"
+DecErr = {1: "Invalid data header",
+          2: "Invalid data trailer",
+          20: "Invalid data for V792",
+          21: "OV data for V792",
+          22: "UN data for V792",
+          23: "UN OV data for V792",
+          30: "Invalid data for V792N",
+          31: "OV data for V792N",
+          32: "UN data for V792N",
+          33: "UN OV data for V792N",
+          40: "Invalid data for V775",
+          41: "OV data for V775",
+          42: "UN data for V775",
+          43: "UB OV data for V775",
+          50: "Invalid data for V775N",
+          51: "OV data for V775N",
+          52: "UN data for V775N",
+          53: "UN OV data for V775N",
+          99: "Invalid data type flag",
+          111: "QDC Channel already seen",
+          112: "TDC Channel already seen",
+          74: "No more data left in the event",
+          254: "Unexpected 0xFE data word",
+          # event header and trailer
+          999: "Wrong number of evt header words",
+          801: "....",
+          802: "Invalid event trailer"
           }
 
+def DiscardEvent(validitylist):
+    fatals = [1, 2, 99, 111, 112, 74, 254, 999]
+    discard = bool(set(fatals) & set(DecErr.keys()))
+    return discard
+    
 def _mask(n):
     return (1 << n) - 1 if n else 0
 
@@ -22,120 +47,189 @@ def _get_bits(v, start, size):
 def _u32(v):
     return v & 0xFFFFFFFF
 
+# ---- Event header decoded all together
+def parse_evt_header(eh, verb = False): # eh is a list of 14 words(numbers) with different size
+    valid = 0
+    if len(eh) != 14:
+        return 999, {}
+    for i, ehw_ in enumerate(eh):
+        ehw = _u32(ehw_)
+        continue
+
+    if verb:
+        print('... evt header decoding to be implemented... ')
+
+    return valid, {"evtnumber": 25, "evttime": 1879020000000, "spillnumber": 1, "nphys": 25, "nped": 7, "nevt": 32, "trigmask": 0x5}
+
+# ----
+def parse_evt_trail(et, verb = False): # et is a single 4-bytes word
+    if et != 0xbbeeddaa:
+        return 802, {}
+
+    if verb:
+        print('Event trailer')
+    return 0, {}
+        
+    
+
 # ---- Bit layouts (LSB -> MSB) ----------------------------------------------
-# head_s:  u:8 | n:6 | z:2 | c:8 | m:3 | g:5
-# trail_s: c:24 | m:3 | g:5
-# data_s:  v:12 | f:3 | u:1 | c:8 | m:3 | g:5
 
 def parse_head(hd, verb = False):
     hd = _u32(hd)
     u = _get_bits(hd, 0, 8)
     nch = _get_bits(hd, 8, 6)
     zero = _get_bits(hd, 14, 2)
-    crate = _get_bits(hd, 16, 8)
+    crate = _get_bits(hd, 16, 4)
+    cratetype = _get_bits(hd, 20, 4)
     marker = _get_bits(hd, 24, 3)
     geo = _get_bits(hd, 27, 5)
     valid = 0 if marker == 2 else 254 if marker == 6 else 1
     if verb:
-        print("header 0x%x geo %d marker %d crate %d zero %d chans %d not used %d - valid %d" % (hd, geo, marker, crate, zero, nch, u, valid))
-    return valid, {"u": u, "n": nch, "z": zero, "c": crate, "m": marker, "g": geo, "raw": hd}
+        print("data header 0x%x geo %d marker %d crate %d type %d zero %d chans %d not used %d - valid %s" % (hd, geo, marker, crate, cratetype, zero, nch, u, str(valid) if valid else 'ok'))
+    return valid, {"u": u, "n": nch, "z": zero, "c": crate, "t": cratetype, "m": marker, "g": geo, "raw": hd}
 
 def parse_trail(tr, verb = False):
     tr = _u32(tr)
     c = _get_bits(tr, 0, 24)
     marker = _get_bits(tr, 24, 3)
     geo = _get_bits(tr, 27, 5)
-    valid = 0 if marker == 4 else 6
+    valid = 0 if marker == 4 else 2
     if verb:
-        print("trail 0x%x geo %d marker %d event counter %d - valid %d" % (tr, geo, marker, c, valid))
+        print("data trail 0x%x geo %d marker %d event counter %d - valid %s" % (tr, geo, marker, c, str(valid) if valid else 'ok'))
     return valid, {"c": c, "m": marker, "g": geo, "raw": tr}
 
-def parse_data(dt,spec = 1, verb = False): # 1 QDC,   4 TDC
+def parse_data(dt, spec = 0, verb = False): # spec from header[20:23]
+
     dt = _u32(dt)
     v = _get_bits(dt, 0, 12)
     f = _get_bits(dt, 12, 3)
-    u = _get_bits(dt, 15, 1)  # "not used" in bob print
+    u = _get_bits(dt, 15, 1)  # "unused"
     c = _get_bits(dt, 16, 8)
     m = _get_bits(dt, 24, 3)
     g = _get_bits(dt, 27, 5)
 
-    if spec == 1:
-        chan = c & 0x1F
-        flags = f & 0x3
-        valid = 0 if m == 0 and flags == 0 else 2
+    
+    if spec == 0b1010:  # QDC V792 32 channels
+        chan = c & 0b11111
+        flags = f & 0b11
+        valid = 0 if m == 0 and flags == 0 else 2*10+flags
         if verb:
-            print("QDC index %d data 0x%x geo %d marker %d chan %d not used %d flags %d val %d - valid %d" % (spec, dt, g, m, chan, u, flags, v, valid))
-    elif spec == 4:
-        chan = ((c >> 1) & 0xF) & 0x1F
-        flags = f
-        valid = 0 if m == 0 and f == 0 else 0 # TODO
+            print("QDC index %d data 0x%x geo %d marker %d chan %02d not used %d flags %d val %d - valid %s" % (spec, dt, g, m, chan, u, flags, v, str(valid) if valid else 'ok'))
+
+    elif spec == 0b1001: # QDC V792N 16 channels
+        chan = (c >> 1) & 0b1111
+        flags = f & 0b11
+        valid = 0 if m == 0 and flags == 0 else 3*10+flags
         if verb:
-            print("TDC index %d data 0x%x geo %d marker %d chan %d not used %d flags %d val %d - valid %d" % (spec, dt, g, m, chan, u, flags, v, valid))
-    else:
-        return 999, {}
+            print("QDC index %d data 0x%x geo %d marker %d chan %02d not used %d flags %d val %d - valid %s" % (spec, dt, g, m, chan, u, flags, v, str(valid) if valid else 'ok'))
+
+    elif spec == 0b0110: # TDC V775 32 channels
+        chan = c & 0b11111
+        flags = f & 0b11
+        vbit = (f >> 2) & 0b1
+        valid = 0 if m == 0 and vbit == 1 and flags == 0 else 4*10+flags
+        if verb:
+            print("TDC index %d data 0x%x geo %d marker %d chan %02d not used %d valbit %d flags %d val %d - valid %s" % (spec, dt, g, m, chan, u, vbit, flags, v, str(valid) if valid else 'ok'))
+
+    elif spec == 0b0101: # TDC V775N 16 channels
+        chan = (c >> 1) & 0b1111
+        flags = f & 0b11
+        vbit = (f >> 2) & 0b1
+        valid = 0 if m == 0 and vbit == 1 and flags == 0 else 5*10+flags
+        if verb:
+            print("TDC index %d data 0x%x geo %d marker %d chan %02d not used %d valbit %d flags %d val %d - valid %s" % (spec, dt, g, m, chan, u, vbit, flags, v, str(valid) if valid else 'ok'))
+        
+    else: # Corrupted header
+        return 99, {}
         
     return valid, {"v": v, "f": flags, "u": u, "c": chan, "m": m, "g": g, "raw": dt}
 
 
 
 
-def decodeblock(line): # line is a single line string for one event. block is a list of 4-bytes words
+def decodeblock(line, verb = False): # line is a single string for one event
+    """Decode  full event. 
+    Error in data header --> stop decoding and forward
+    Error in data trailer --> stop decoding and forward
+    Error in data payload --> do not stop decoding. TDC sanity flags stored in output
+    """
 
+    if verb:
+        print(line)
     block = [int(i,16) for i in line.split()]
 
-    valid = 0
-    ADC = {}
-    TDC = {}
-    HEAD = {"evtnumber": 25, "evttime": "256-13-46-59-791534", "spillnumber": 1, "nphys": 25, "nped": 7, "nevt": 32, "trigmask": 0x5} # TODO placeholder
+    valid = []
+    ADC = {} # ADC[channel] = value
+    TDC = {} # TDC[channel] = (value, flag) <-- non-zero flag for OV or UN
+
     adcset = set()
     tdcset = set()
 
     INDEX = 0
-    nHeader = 0
+    nDataHeader = 0
+
+    v, HEAD = parse_evt_header(block[0:14], verb=verb)
+    if v:
+        valid.append(v)
+        return valid, HEAD, ADC, TDC
+    INDEX = 14
     
-    while INDEX < len(block):
-        v, w = parse_head(block[INDEX])
+    while INDEX < len(block)-1:
+        v, w = parse_head(block[INDEX], verb=verb)
         crate = w["c"]
+        cratetype = w["t"]
+        isQDC = bool((cratetype >> 3) & 0b1)
         INDEX += 1
         if v == 254 and INDEX == len(block):  # 0xFE... words are tolerated at the end of the event
             return valid, HEAD, ADC, TDC
         elif v:
-            return v, HEAD, {}, {}
+            valid.append(v)
+            return valid, HEAD, ADC, TDC
 
-        nHeader += 1
+        nDataHeader += 1
         for iword in range(w["n"]):
-          
-            isADC = (nHeader <= 5) # WIll be written in crate word
-            v, w = parse_data(block[INDEX], spec = 1 if isADC else 4)
+
+            if INDEX == len(block):
+                valid.append(74)
+                return valid, HEAD, ADC, TDC
+            
+            v, w = parse_data(block[INDEX], spec = cratetype, verb=verb)
             INDEX += 1
             if v:
-                return v, HEAD, {}, {}
-
-            chan = (crate-1)*32 + w["c"]
-            if isADC:
+                valid.append(v)
+    
+            chan = crate*32 + w["c"]
+            
+            if isQDC:
                 if chan in adcset:
-                    valid = 111
+                    valid.append(111)
                 adcset.add(chan)
                 ADC[chan] = w["v"]
             else:
                 if chan in tdcset:
-                    valid = 111
+                    valid.append(112)
                 tdcset.add(chan)
-                TDC[chan] = w["v"]
+                TDC[chan] = (w["v"], w["f"])
 
-        v, w = parse_trail(block[INDEX])
+        v, w = parse_trail(block[INDEX], verb=verb)
         INDEX += 1
         if v:
-            return v, HEAD, {}, {}
+            valid.append(v)
+            return valid, HEAD, ADC, TDC
+
+    # if INDEX != DATA SINZE WRITTEN IN HEADER
+    if INDEX >= len(block):
+        valid.append(74)
+        return valid, HEAD, ADC, TDC
+    v, w = parse_evt_trail(block[INDEX], verb=verb)
+    if v:
+        valid.append(v)
 
     return valid, HEAD, ADC, TDC
 
         
 
     
-            
-        
-                
 
 # ---- Optional: small demo when run directly ---------------------------------
 if __name__ == "__main__":
@@ -155,9 +249,8 @@ if __name__ == "__main__":
             line = line.strip()   # remove leading/trailing whitespace & newline
             print("--- Evt %d ---" %evt)
             evt += 1
-            v, head, adc, tdc = decodeblock(line)
-            if v:
+            valid, head, adc, tdc = decodeblock(line)
+            for v in valid:
                 print("DECODING ERROR code %d : %s" %(v, DecErr[v]))
-            else:
                 print(adc)
                 print(tdc)

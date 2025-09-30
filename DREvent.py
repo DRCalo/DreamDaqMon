@@ -102,17 +102,26 @@ def DRdecode24(evLine):
 
 
 # Parse the evLine and return a DREvent object -- Raw data format since 
-def DRdecode25(evLine):
+def DRdecode25(evLine, verbose):
   """Function that converts a raw data record (event) from
      ascii to object oriented representation: DREvent class"""
   # Create new DREvent
   e = DREvent()
 
-  valid, header, adc, tdc = bob.decodeblock(evLine)
+  valid, header, adc, tdc = bob.decodeblock(evLine, verbose)
 
+  
   if valid:
-    print("Decoding error evt %d id %d %s - returning empty event" %(-1, valid, bob.DecErr[valid]))
-    return e
+    try:
+      evtnumber = header["evtnumber"]
+    except:
+      evtnumber = 0
+    print("Evt %d - found decoding errors - %d ADCs %d TDCs decoded" %(evtnumber, len(adc), len(tdc)))
+    for v in valid:
+      print("Evt %d - error id %d: %s" %(evtnumber, v, bob.DecErr[v]))
+    if bob.DiscardEvent(valid):
+      print("Evt %d - discarding, returning None as event" %(evtnumber))
+      return None
 
   # Parse header
   e.EventNumber = int( header["evtnumber"] )
@@ -131,17 +140,19 @@ def DRdecode25(evLine):
   # TODO what is check number of TDCs? Setting to 1 now
   # Parse TDC
   for chan in tdc:
-    e.TDCs[chan] = (tdc[chan], 1)
+    e.TDCs[chan] = tdc[chan] # tdc[chan] is a pair (value, flag)
 
     
   return e
 
 # Wrapper for compatibility with two data format
-def DRdecode(evLine, spec='2025'):
+def DRdecode(evLine, spec='2025', verbose = False):
 
   if spec == '2025':
-    return DRdecode25(evLine)
+    return DRdecode25(evLine, verbose)
   else:
+    if verbose:
+      print('WARINIG - Verbosity implemented only for 2025 data format')
     return DRdecode24(evLine)
 
 
@@ -149,18 +160,24 @@ def DRdecode(evLine, spec='2025'):
 if __name__ == "__main__":
   import sys
   if len(sys.argv) < 2:
-    print ("Usage:" + sys.argv[0] + "filename [v=verbose]")
+    print ("Usage: " + sys.argv[0] + " filename [v/vv=verbosity]")
     sys.exit(1)
  
-  verbose = False
+  verboseHead = False
+  verboseEvt = False
   if len(sys.argv) == 3:
-    verbose = True 
+    verboseHead = True
+    if str(sys.argv[2]) == 'vv':
+      verboseEvt = True
   for i, line in enumerate( open( sys.argv[1] ) ):
-    ev = DRdecode(line)
-    if verbose:
+    ev = DRdecode(line, spec = '2025', verbose=verboseEvt)
+    if verboseHead:
       if i%30 == 0:
-        print(ev.headLine())
-      print(ev)
+        if ev != None:
+          print(ev.headLine())
+        else:
+          print('None event')
+        print(ev)
     
 
   

@@ -3,8 +3,8 @@
 
 import re
 
-DecErr = {1: "Invalid header",
-          2: "Invalid trailer",
+DecErr = {1: "Invalid data header",
+          2: "Invalid data trailer",
           20: "Invalid data for V792",
           21: "OV data for V792",
           22: "UN data for V792",
@@ -21,15 +21,19 @@ DecErr = {1: "Invalid header",
           51: "OV data for V775N",
           52: "UN data for V775N",
           53: "UN OV data for V775N",
-          999: "Invalid data type flag",
+          99: "Invalid data type flag",
           111: "QDC Channel already seen",
           112: "TDC Channel already seen",
           74: "No more data left in the event",
-          254: "Unexpected 0xFE word"
+          254: "Unexpected 0xFE data word",
+          # event header and trailer
+          999: "Wrong number of evt header words",
+          801: "....",
+          802: "Invalid event trailer"
           }
 
 def DiscardEvent(validitylist):
-    fatals = [1, 2, 999, 111, 112, 74, 254]
+    fatals = [1, 2, 99, 111, 112, 74, 254, 999]
     discard = bool(set(fatals) & set(DecErr.keys()))
     return discard
     
@@ -42,6 +46,31 @@ def _get_bits(v, start, size):
 
 def _u32(v):
     return v & 0xFFFFFFFF
+
+# ---- Event header decoded all together
+def parse_evt_header(eh, verb = False): # eh is a list of 14 words(numbers) with different size
+    valid = 0
+    if len(eh) != 14:
+        return 999, {}
+    for i, ehw_ in enumerate(eh):
+        ehw = _u32(ehw_)
+        continue
+
+    if verb:
+        print('... evt header decoding to be implemented... ')
+
+    return valid, {"evtnumber": 25, "evttime": 1879020000000, "spillnumber": 1, "nphys": 25, "nped": 7, "nevt": 32, "trigmask": 0x5}
+
+# ----
+def parse_evt_trail(et, verb = False): # et is a single 4-bytes word
+    if et != 0xbbeeddaa:
+        return 802, {}
+
+    if verb:
+        print('Event trailer')
+    return 0, {}
+        
+    
 
 # ---- Bit layouts (LSB -> MSB) ----------------------------------------------
 
@@ -56,7 +85,7 @@ def parse_head(hd, verb = False):
     geo = _get_bits(hd, 27, 5)
     valid = 0 if marker == 2 else 254 if marker == 6 else 1
     if verb:
-        print("header 0x%x geo %d marker %d crate %d type %d zero %d chans %d not used %d - valid %s" % (hd, geo, marker, crate, cratetype, zero, nch, u, str(valid) if valid else 'ok'))
+        print("data header 0x%x geo %d marker %d crate %d type %d zero %d chans %d not used %d - valid %s" % (hd, geo, marker, crate, cratetype, zero, nch, u, str(valid) if valid else 'ok'))
     return valid, {"u": u, "n": nch, "z": zero, "c": crate, "t": cratetype, "m": marker, "g": geo, "raw": hd}
 
 def parse_trail(tr, verb = False):
@@ -66,7 +95,7 @@ def parse_trail(tr, verb = False):
     geo = _get_bits(tr, 27, 5)
     valid = 0 if marker == 4 else 2
     if verb:
-        print("trail 0x%x geo %d marker %d event counter %d - valid %s" % (tr, geo, marker, c, str(valid) if valid else 'ok'))
+        print("data trail 0x%x geo %d marker %d event counter %d - valid %s" % (tr, geo, marker, c, str(valid) if valid else 'ok'))
     return valid, {"c": c, "m": marker, "g": geo, "raw": tr}
 
 def parse_data(dt, spec = 0, verb = False): # spec from header[20:23]
@@ -111,7 +140,7 @@ def parse_data(dt, spec = 0, verb = False): # spec from header[20:23]
             print("TDC index %d data 0x%x geo %d marker %d chan %02d not used %d valbit %d flags %d val %d - valid %s" % (spec, dt, g, m, chan, u, vbit, flags, v, str(valid) if valid else 'ok'))
         
     else: # Corrupted header
-        return 999, {}
+        return 99, {}
         
     return valid, {"v": v, "f": flags, "u": u, "c": chan, "m": m, "g": g, "raw": dt}
 
@@ -125,19 +154,27 @@ def decodeblock(line, verb = False): # line is a single string for one event
     Error in data payload --> do not stop decoding. TDC sanity flags stored in output
     """
 
+    if verb:
+        print(line)
     block = [int(i,16) for i in line.split()]
 
     valid = []
     ADC = {} # ADC[channel] = value
     TDC = {} # TDC[channel] = (value, flag) <-- non-zero flag for OV or UN
-    HEAD = {"evtnumber": 25, "evttime": 1879020000000, "spillnumber": 1, "nphys": 25, "nped": 7, "nevt": 32, "trigmask": 0x5} # TODO placeholder
+
     adcset = set()
     tdcset = set()
 
     INDEX = 0
-    nHeader = 0
+    nDataHeader = 0
+
+    v, HEAD = parse_evt_header(block[0:14], verb=verb)
+    if v:
+        valid.append(v)
+        return valid, HEAD, ADC, TDC
+    INDEX = 14
     
-    while INDEX < len(block):
+    while INDEX < len(block)-1:
         v, w = parse_head(block[INDEX], verb=verb)
         crate = w["c"]
         cratetype = w["t"]
@@ -149,7 +186,7 @@ def decodeblock(line, verb = False): # line is a single string for one event
             valid.append(v)
             return valid, HEAD, ADC, TDC
 
-        nHeader += 1
+        nDataHeader += 1
         for iword in range(w["n"]):
 
             if INDEX == len(block):
@@ -179,6 +216,14 @@ def decodeblock(line, verb = False): # line is a single string for one event
         if v:
             valid.append(v)
             return valid, HEAD, ADC, TDC
+
+    # if INDEX != DATA SINZE WRITTEN IN HEADER
+    if INDEX >= len(block):
+        valid.append(74)
+        return valid, HEAD, ADC, TDC
+    v, w = parse_evt_trail(block[INDEX], verb=verb)
+    if v:
+        valid.append(v)
 
     return valid, HEAD, ADC, TDC
 

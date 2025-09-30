@@ -120,8 +120,8 @@ def DRdecode25(evLine, verbose):
     for v in valid:
       print("Evt %d - error id %d: %s" %(evtnumber, v, bob.DecErr[v]))
     if bob.DiscardEvent(valid):
-      print("Evt %d - discarding, returning empty event" %(evtnumber))
-      return e
+      print("Evt %d - discarding, returning None as event" %(evtnumber))
+      return None
 
   # Parse header
   e.EventNumber = int( header["evtnumber"] )
@@ -173,8 +173,11 @@ if __name__ == "__main__":
     ev = DRdecode(line, spec = '2025', verbose=verboseEvt)
     if verboseHead:
       if i%30 == 0:
-        print(ev.headLine())
-      print(ev)
+        if ev != None:
+          print(ev.headLine())
+        else:
+          print('None event')
+        print(ev)
     
 
   

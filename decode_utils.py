@@ -180,7 +180,7 @@ def decodeblock(line, verb = False): # line is a single string for one event
         cratetype = w["t"]
         isQDC = bool((cratetype >> 3) & 0b1)
         INDEX += 1
-        if v == 254 and INDEX == len(block):  # 0xFE... words are tolerated at the end of the event
+        if v == 254 and INDEX == len(block)-1:  # 0xFE... words are tolerated at the end of the event
             return valid, HEAD, ADC, TDC
         elif v:
             valid.append(v)

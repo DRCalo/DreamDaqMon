@@ -24,17 +24,18 @@ DecErr = {1: "Invalid data header",
           99: "Invalid data type flag",
           111: "QDC Channel already seen",
           112: "TDC Channel already seen",
-          74: "No more data left in the event",
+          74: "Expect evt trailer but no more data",
+          75: "Failed checksum event size",
           254: "Unexpected 0xFE data word",
           # event header and trailer
-          999: "Wrong number of evt header words",
+          999: "Failed header sanity check",
           801: "....",
-          802: "Invalid event trailer"
+          810: "Invalid event trailer"
           }
 
 def DiscardEvent(validitylist):
-    fatals = [1, 2, 99, 111, 112, 74, 254, 999]
-    discard = bool(set(fatals) & set(DecErr.keys()))
+    fatals = [1, 2, 99, 111, 112, 74, 75, 254, 999, 810]
+    discard = bool(set(fatals) & set(validitylist))
     return discard
     
 def _mask(n):
@@ -49,25 +50,48 @@ def _u32(v):
 
 # ---- Event header decoded all together
 def parse_evt_header(eh, verb = False): # eh is a list of 14 words(numbers) with different size
-    valid = 0
+    """index word
+    0  eventMarker
+    1  eventNumber
+    2  spillNumber
+    3  headerSize
+    4  trailerSize
+    5  dataSize
+    6  eventSize
+    7  eventTimeSecs
+    8  eventTimeMicrosecs
+    9  triggerMask
+    10 isPedMask
+    11 isPedFromScaler
+    12 sanityFlag
+    13 headerEndMarker
+    """
+    
     if len(eh) != 14:
         return 999, {}
-    for i, ehw_ in enumerate(eh):
-        ehw = _u32(ehw_)
-        continue
+    if eh[0] != 0xccaaffee or eh[13] != 0xaccadead or eh[3] != 0xe or eh[4] != 0x1 or eh[6] != eh[3]+eh[4]+eh[5]: 
+        return 999, {}
+
+    evtnumber = eh[1]
+    spillnumber = eh[2]
+    
+    datasize = eh[5]
+    evttime = eh[7] + 1000000*eh[8]
+
+    trigmask = eh[9]
 
     if verb:
-        print('... evt header decoding to be implemented... ')
+        print("### Event header %d spill %d timeus %d trigger %d pay_size %d"%(evtnumber,spillnumber,evttime,trigmask,datasize))
 
-    return valid, {"evtnumber": 25, "evttime": 1879020000000, "spillnumber": 1, "nphys": 25, "nped": 7, "nevt": 32, "trigmask": 0x5}
+    return 0, {"evtnumber": evtnumber, "evttime": evttime, "spillnumber": spillnumber, "trigmask": trigmask, "payloadsize": datasize}
 
 # ----
 def parse_evt_trail(et, verb = False): # et is a single 4-bytes word
     if et != 0xbbeeddaa:
-        return 802, {}
+        return 810, {}
 
     if verb:
-        print('Event trailer')
+        print('### Event trailer')
     return 0, {}
         
     
@@ -173,14 +197,17 @@ def decodeblock(line, verb = False): # line is a single string for one event
         valid.append(v)
         return valid, HEAD, ADC, TDC
     INDEX = 14
+
+    PayloadSize = HEAD["payloadsize"]
     
-    while INDEX < len(block)-1:
+    #while INDEX < len(block)-1:
+    while INDEX < 14 + PayloadSize:
         v, w = parse_head(block[INDEX], verb=verb)
+        INDEX += 1
         crate = w["c"]
         cratetype = w["t"]
         isQDC = bool((cratetype >> 3) & 0b1)
-        INDEX += 1
-        if v == 254 and INDEX == len(block)-1:  # 0xFE... words are tolerated at the end of the event
+        if v == 254 and INDEX == 14 + PayloadSize:  # 0xFE... words are tolerated at the end of the event
             return valid, HEAD, ADC, TDC
         elif v:
             valid.append(v)
@@ -197,8 +224,11 @@ def decodeblock(line, verb = False): # line is a single string for one event
             INDEX += 1
             if v:
                 valid.append(v)
-    
-            chan = crate*32 + w["c"]
+
+            if isQDC:
+                chan = crate*32 + w["c"]
+            else: # Aassuming only one TDC module 
+                chan = w["c"]
             
             if isQDC:
                 if chan in adcset:
@@ -222,6 +252,10 @@ def decodeblock(line, verb = False): # line is a single string for one event
         valid.append(74)
         return valid, HEAD, ADC, TDC
     v, w = parse_evt_trail(block[INDEX], verb=verb)
+    INDEX += 1
+    if INDEX != len(block):
+        valid.append(75)
+        return valid, HEAD, ADC, TDC
     if v:
         valid.append(v)
 
@@ -232,25 +266,25 @@ def decodeblock(line, verb = False): # line is a single string for one event
     
 
 # ---- Optional: small demo when run directly ---------------------------------
-if __name__ == "__main__":
-    
-    
-    import sys
-    if len(sys.argv) != 2:
-        print("Usage: python2 %s <file>" % sys.argv[0])
-        sys.exit(1)
-
-    path = sys.argv[1]
-
-    
-    with open(path, "r") as f:
-        evt = 0
-        for line in f:
-            line = line.strip()   # remove leading/trailing whitespace & newline
-            print("--- Evt %d ---" %evt)
-            evt += 1
-            valid, head, adc, tdc = decodeblock(line)
-            for v in valid:
-                print("DECODING ERROR code %d : %s" %(v, DecErr[v]))
-                print(adc)
-                print(tdc)
+#if __name__ == "__main__":
+#    
+#    
+#    import sys
+#    if len(sys.argv) != 2:
+#        print("Usage: python2 %s <file>" % sys.argv[0])
+#        sys.exit(1)
+#
+#    path = sys.argv[1]
+#
+#    
+#    with open(path, "r") as f:
+#        evt = 0
+#        for line in f:
+#            line = line.strip()   # remove leading/trailing whitespace & newline
+#            print("--- Evt %d ---" %evt)
+#            evt += 1
+#            valid, head, adc, tdc = decodeblock(line)
+#            for v in valid:
+#                print("DECODING ERROR code %d : %s" %(v, DecErr[v]))
+#                print(adc)
+#                print(tdc)

@@ -1,6 +1,12 @@
 # Conversion fron ascii data format to DREvent class
 
 import decode_utils as bob
+import time
+try:
+  from io import open
+except ImportError:
+  pass
+
 
 class DREvent:
   ''' Class that represent a Dual Readout event at TB 2024 @H8 '''
@@ -102,7 +108,7 @@ def DRdecode24(evLine):
 
 
 # Parse the evLine and return a DREvent object -- Raw data format since 
-def DRdecode25(evLine, verbose):
+def DRdecode25(evLine, verbose, dumperror):
   """Function that converts a raw data record (event) from
      ascii to object oriented representation: DREvent class"""
   # Create new DREvent
@@ -110,7 +116,29 @@ def DRdecode25(evLine, verbose):
 
   valid, header, adc, tdc = bob.decodeblock(evLine, verbose)
 
-  
+  if valid and dumperror != None:
+    delimiter = "----------------"
+    errors = "\n".join(["ID %d : %s"%(v, bob.DecErr[v]) for v in valid])
+    discard = str(bob.DiscardEvent(valid))
+    try:
+      evtnumber = header["evtnumber"]
+    except:
+      evtnumber = -1
+    dump = u"%s\n%s\nEvent %d\n%s\nDiscard %s\n%s\n%s\n%s\n%s\n" %(
+      delimiter,
+      time.ctime(),
+      evtnumber,
+      errors,
+      discard,
+      evLine,
+      str(header),
+      str(adc),
+      str(tdc)
+      )
+    with open(dumperror, "a", encoding="utf-8") as fdump:
+      fdump.write(dump)
+     
+
   if valid:
     try:
       evtnumber = header["evtnumber"]
@@ -127,9 +155,9 @@ def DRdecode25(evLine, verbose):
   e.EventNumber = int( header["evtnumber"] )
   e.EventTime = header["evttime"]
   e.SpillNumber = int( header["spillnumber"] )
-  e.NumOfPhysEv = int( header["nphys"] )
-  e.NumOfPedeEv = int( header["nped"] )
-  e.NumOfSpilEv = int( header["nevt"] )
+  e.NumOfPhysEv = -1 # int( header["nphys"] )
+  e.NumOfPedeEv = -1 # int( header["nped"] )
+  e.NumOfSpilEv = -1 # int( header["nevt"] )
 
   e.TriggerMask = int( header["trigmask"] )
   
@@ -142,17 +170,18 @@ def DRdecode25(evLine, verbose):
   for chan in tdc:
     e.TDCs[chan] = tdc[chan] # tdc[chan] is a pair (value, flag)
 
-    
   return e
 
 # Wrapper for compatibility with two data format
-def DRdecode(evLine, spec='2025', verbose = False):
+def DRdecode(evLine, spec='2025', verbose = False, dumperror = None):
 
   if spec == '2025':
-    return DRdecode25(evLine, verbose)
+    return DRdecode25(evLine, verbose, dumperror)
   else:
     if verbose:
-      print('WARINIG - Verbosity implemented only for 2025 data format')
+      print('WARNING - Verbosity implemented only for 2025 data format')
+    if dumperror != None:
+      print('WARNING - Dump of corrupted data implemented only for 2025 data format')
     return DRdecode24(evLine)
 
 
@@ -170,14 +199,13 @@ if __name__ == "__main__":
     if str(sys.argv[2]) == 'vv':
       verboseEvt = True
   for i, line in enumerate( open( sys.argv[1] ) ):
-    ev = DRdecode(line, spec = '2025', verbose=verboseEvt)
-    if verboseHead:
-      if i%30 == 0:
-        if ev != None:
-          print(ev.headLine())
-        else:
-          print('None event')
-        print(ev)
-    
+    n = time.time()
+    ev = DRdecode(line, spec = '2025', verbose=verboseEvt, dumperror="drevent_error_dump.txt")
+    dt = 1000*(time.time()-n)
+    if verboseHead and ev != None:
+      adcs = len(ev.ADCs)
+      tdcs = len(ev.TDCs)
+      tdcs_good = len([t for t in ev.TDCs if ev.TDCs[t][1]])
+      print("--> (Event Header) Line %d - Event %d Spill %d Trig %d - %d %d (%d) - decoding time ms %f"%(i, ev.EventNumber, ev.SpillNumber, ev.TriggerMask, adcs, tdcs, tdcs_good, dt))
 
-  
+

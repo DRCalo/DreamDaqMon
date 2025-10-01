@@ -84,8 +84,8 @@ def parse_evt_header(eh, verb = False): # eh is a list of 14 words(numbers) with
     spillnumber = eh[2]
     
     datasize = eh[5]
-    evttime = eh[7] + 1000000*eh[8]
-
+    evttime = eh[7]*1000000 + eh[8]
+    
     trigmask = eh[9]
 
     if verb:

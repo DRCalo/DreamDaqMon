@@ -3,9 +3,9 @@
 
 import re
 
-DecErr = {1: "Invalid data header",
-          2: "Invalid data trailer",
-          20: "Invalid data for V792",
+DecErr = {1: "Invalid data header", # returned with raw
+          2: "Invalid data trailer", # returned with raw
+          20: "Invalid data for V792", # retuened with channel ID
           21: "OV data for V792",
           22: "UN data for V792",
           23: "UN OV data for V792",
@@ -21,21 +21,25 @@ DecErr = {1: "Invalid data header",
           51: "OV data for V775N",
           52: "UN data for V775N",
           53: "UN OV data for V775N",
-          99: "Invalid data type flag",
-          111: "QDC Channel already seen",
-          112: "TDC Channel already seen",
-          74: "Expect evt trailer but no more data",
-          75: "Failed checksum event size",
-          254: "Unexpected 0xFE data word",
+          99: "Invalid data type flag", # returned with raw
+          111: "QDC Channel already seen", # returned with channel ID
+          112: "TDC Channel already seen", # returned with channel ID
+          74: "Expect evt trailer but no more data",  # returned with event number
+          75: "Failed checksum event size", # returned with event number
+          254: "Unexpected 0xFE data word", # returned with raw
           # event header and trailer
-          999: "Failed header sanity check",
+          999: "Failed header sanity check", # returned with event number
           801: "....",
-          810: "Invalid event trailer"
+          810: "Invalid event trailer" # returned with event number
           }
+
+def ets(val): # val is (,)
+    return "ID %d (%d): %s" % (val[0], val[1], DecErr[val[0]])
 
 def DiscardEvent(validitylist):
     fatals = [1, 2, 99, 111, 112, 74, 75, 254, 999, 810]
-    discard = bool(set(fatals) & set(validitylist))
+    validityflags = set(x for (x, y) in validitylist)
+    discard = bool(set(fatals) & set(validityflags))
     return discard
     
 def _mask(n):
@@ -66,13 +70,17 @@ def parse_evt_header(eh, verb = False): # eh is a list of 14 words(numbers) with
     12 sanityFlag
     13 headerEndMarker
     """
-    
-    if len(eh) != 14:
-        return 999, {}
-    if eh[0] != 0xccaaffee or eh[13] != 0xaccadead or eh[3] != 0xe or eh[4] != 0x1 or eh[6] != eh[3]+eh[4]+eh[5]: 
-        return 999, {}
 
-    evtnumber = eh[1]
+    try:
+        evtnumber = eh[1]
+    except:
+        evtnumber = -1
+        
+    if len(eh) != 14:
+        return 999, {"evtnumber": evtnumber}
+    if eh[0] != 0xccaaffee or eh[13] != 0xaccadead or eh[3] != 0xe or eh[4] != 0x1 or eh[6] != eh[3]+eh[4]+eh[5]: 
+        return 999, {"evtnumber": evtnumber}
+
     spillnumber = eh[2]
     
     datasize = eh[5]
@@ -88,11 +96,11 @@ def parse_evt_header(eh, verb = False): # eh is a list of 14 words(numbers) with
 # ----
 def parse_evt_trail(et, verb = False): # et is a single 4-bytes word
     if et != 0xbbeeddaa:
-        return 810, {}
+        return 810, {"raw": et}
 
     if verb:
         print('### Event trailer')
-    return 0, {}
+    return 0, {"raw": et}
         
     
 
@@ -164,7 +172,7 @@ def parse_data(dt, spec = 0, verb = False): # spec from header[20:23]
             print("TDC index %d data 0x%x geo %d marker %d chan %02d not used %d valbit %d flags %d val %d - valid %s" % (spec, dt, g, m, chan, u, vbit, flags, v, str(valid) if valid else 'ok'))
         
     else: # Corrupted header
-        return 99, {}
+        return 99, {"raw": dt}
         
     return valid, {"v": v, "f": flags, "u": u, "c": chan, "m": m, "g": g, "raw": dt}
 
@@ -173,16 +181,13 @@ def parse_data(dt, spec = 0, verb = False): # spec from header[20:23]
 
 def decodeblock(line, verb = False): # line is a single string for one event
     """Decode  full event. 
-    Error in data header --> stop decoding and forward
-    Error in data trailer --> stop decoding and forward
-    Error in data payload --> do not stop decoding. TDC sanity flags stored in output
     """
 
     if verb:
         print(line)
     block = [int(i,16) for i in line.split()]
 
-    valid = []
+    valid = [] # list of (errorID, info) 
     ADC = {} # ADC[channel] = value
     TDC = {} # TDC[channel] = (value, flag) <-- non-zero flag for OV or UN
 
@@ -194,7 +199,7 @@ def decodeblock(line, verb = False): # line is a single string for one event
 
     v, HEAD = parse_evt_header(block[0:14], verb=verb)
     if v:
-        valid.append(v)
+        valid.append((v,HEAD["evtnumber"]))
         return valid, HEAD, ADC, TDC
     INDEX = 14
 
@@ -207,57 +212,66 @@ def decodeblock(line, verb = False): # line is a single string for one event
         crate = w["c"]
         cratetype = w["t"]
         isQDC = bool((cratetype >> 3) & 0b1)
-        if v == 254 and INDEX == 14 + PayloadSize:  # 0xFE... words are tolerated at the end of the event
-            return valid, HEAD, ADC, TDC
+        nword = w["n"]
+        fehandler = False
+        if v == 254 and INDEX == 14 + PayloadSize and INDEX == len(block)-1:  # 0xFE... words are tolerated at the end of the event 
+            #return valid, HEAD, ADC, TDC
+            fehandler = True
         elif v:
-            valid.append(v)
+            valid.append((v,w["raw"]))
             return valid, HEAD, ADC, TDC
 
         nDataHeader += 1
-        for iword in range(w["n"]):
+        for iword in range(0 if fehandler else nword):
 
             if INDEX == len(block):
-                valid.append(74)
+                valid.append((74,HEAD["evtnumber"]))
                 return valid, HEAD, ADC, TDC
             
             v, w = parse_data(block[INDEX], spec = cratetype, verb=verb)
             INDEX += 1
-            if v:
-                valid.append(v)
-
+            if v == 99:
+                valid.append((99,w["raw"]))
+                return valid, HEAD, ADC, TDC
+        
             if isQDC:
                 chan = crate*32 + w["c"]
             else: # Aassuming only one TDC module 
                 chan = w["c"]
+
+            if v:
+                valid.append((v,chan))
             
             if isQDC:
                 if chan in adcset:
-                    valid.append(111)
+                    valid.append((111,chan))
                 adcset.add(chan)
                 ADC[chan] = w["v"]
             else:
                 if chan in tdcset:
-                    valid.append(112)
+                    valid.append((112,chan))
                 tdcset.add(chan)
                 TDC[chan] = (w["v"], w["f"])
 
-        v, w = parse_trail(block[INDEX], verb=verb)
-        INDEX += 1
-        if v:
-            valid.append(v)
-            return valid, HEAD, ADC, TDC
+        if not fehandler:
+            v, w = parse_trail(block[INDEX], verb=verb)
+            INDEX += 1
+            if v:
+                valid.append((v,w["raw"]))
+                return valid, HEAD, ADC, TDC
 
-    # if INDEX != DATA SINZE WRITTEN IN HEADER
+    # if INDEX != DATA SIZE WRITTEN IN HEADER
     if INDEX >= len(block):
-        valid.append(74)
+        valid.append((74,HEAD["evtnumber"]))
         return valid, HEAD, ADC, TDC
+    
     v, w = parse_evt_trail(block[INDEX], verb=verb)
     INDEX += 1
     if INDEX != len(block):
-        valid.append(75)
+        valid.append((75,HEAD["evtnumber"]))
         return valid, HEAD, ADC, TDC
     if v:
-        valid.append(v)
+        valid.append((v,HEAD["evtnumber"]))
 
     return valid, HEAD, ADC, TDC
 

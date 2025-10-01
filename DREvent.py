@@ -118,7 +118,7 @@ def DRdecode25(evLine, verbose, dumperror):
 
   if valid and dumperror != None:
     delimiter = "----------------"
-    errors = "\n".join(["ID %d : %s"%(v, bob.DecErr[v]) for v in valid])
+    errors = "\n".join([bob.ets(v) for v in valid])
     discard = str(bob.DiscardEvent(valid))
     try:
       evtnumber = header["evtnumber"]
@@ -143,10 +143,10 @@ def DRdecode25(evLine, verbose, dumperror):
     try:
       evtnumber = header["evtnumber"]
     except:
-      evtnumber = 0
+      evtnumber = -1
     print("Evt %d - found decoding errors - %d ADCs %d TDCs decoded" %(evtnumber, len(adc), len(tdc)))
     for v in valid:
-      print("Evt %d - error id %d: %s" %(evtnumber, v, bob.DecErr[v]))
+      print("Evt %d - error %s" %(evtnumber, bob.ets(v)))
     if bob.DiscardEvent(valid):
       print("Evt %d - discarding, returning None as event" %(evtnumber))
       return None
@@ -206,6 +206,6 @@ if __name__ == "__main__":
       adcs = len(ev.ADCs)
       tdcs = len(ev.TDCs)
       tdcs_good = len([t for t in ev.TDCs if ev.TDCs[t][1]])
-      print("--> (Event Header) Line %d - Event %d Spill %d Trig %d - %d %d (%d) - decoding time ms %f"%(i, ev.EventNumber, ev.SpillNumber, ev.TriggerMask, adcs, tdcs, tdcs_good, dt))
+      print("--> (Event Summary) Line %d - Event %d Spill %d Trig %d - %d %d (%d) - decoding time ms %f"%(i, ev.EventNumber, ev.SpillNumber, ev.TriggerMask, adcs, tdcs, tdcs_good, dt))
 
 

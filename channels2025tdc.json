@@ -1,0 +1,73 @@
+{
+    "0": {
+        "phys": "dwc1-l",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "1": {
+        "phys": "dwc1-r",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "2": {
+        "phys": "dwc1-u",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "3": {
+        "phys": "dwc1-d",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "4": {
+        "phys": "dwc2-l",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "5": {
+        "phys": "dwc2-r",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "6": {
+        "phys": "dwc2-u",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "7": {
+        "phys": "dwc2-d",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "8": {
+        "phys": "TC00",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "15": {
+        "phys": "TS00",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "10": {
+        "phys": "TC11",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "11": {
+        "phys": "TS11",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "12": {
+        "phys": "TC15",
+        "pedestal": 0,
+        "monthreshold": 0
+    },
+    "13": {
+        "phys": "TS15",
+        "pedestal": 0,
+        "monthreshold": 0
+    }
+}
+    

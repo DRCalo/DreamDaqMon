@@ -116,23 +116,26 @@ def DRdecode25(evLine, verbose, dumperror):
 
   valid, header, adc, tdc = bob.decodeblock(evLine, verbose)
 
+  discard = bob.DiscardEvent(valid)
+
   if valid and dumperror != None:
     delimiter = "----------------"
     errors = "\n".join([bob.ets(v) for v in valid])
-    discard = str(bob.DiscardEvent(valid))
     try:
       evtnumber = header["evtnumber"]
     except:
       evtnumber = -1
-    dump = u"%s\n%s\nEvent %d\n%s\nDiscard %s\n%s\n%s\n%s\n%s\n" %(
+    dump = u"%s\n%s\nEvent %d\n%s\nDiscard %s\n%s\n%s\n%d adc %s\n%d tdc %s\n" %(
       delimiter,
       time.ctime(),
       evtnumber,
       errors,
-      discard,
+      str(discard),
       evLine,
       str(header),
+      len(adc),
       str(adc),
+      len(tdc),
       str(tdc)
       )
     with open(dumperror, "a", encoding="utf-8") as fdump:
@@ -147,9 +150,11 @@ def DRdecode25(evLine, verbose, dumperror):
     print("Evt %d - found decoding errors - %d ADCs %d TDCs decoded" %(evtnumber, len(adc), len(tdc)))
     for v in valid:
       print("Evt %d - error %s" %(evtnumber, bob.ets(v)))
-    if bob.DiscardEvent(valid):
+    if discard:
       print("Evt %d - discarding, returning None as event" %(evtnumber))
-      return None
+
+  if discard:
+    return None
 
   # Parse header
   e.EventNumber = int( header["evtnumber"] )

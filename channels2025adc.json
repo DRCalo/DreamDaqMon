@@ -1,0 +1,737 @@
+{
+    "0": {
+        "phys": "105-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "31": {
+	"phys": "preshower",
+	"pedestal": 150,
+	"monthreshold": 150
+    },
+    "63": {
+	"phys": "veto",
+	"pedestal": 150,
+	"monthreshold": 150
+    },
+    "32": {
+        "phys": "505-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "64": {
+        "phys": "105-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "96": {
+        "phys": "505-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "128": {
+        "phys": "L1",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "160": {
+        "phys": "TailCatcher",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "1": {
+        "phys": "106-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "33": {
+        "phys": "506-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "65": {
+        "phys": "106-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "97": {
+        "phys": "506-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "129": {
+        "phys": "L2",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "161": {
+        "phys": "Muon",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "2": {
+        "phys": "107-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "34": {
+        "phys": "507-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "66": {
+        "phys": "107-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "98": {
+        "phys": "507-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "130": {
+        "phys": "L3",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "162": {
+        "phys": "Cher1",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "3": {
+        "phys": "108-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "35": {
+        "phys": "508-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "67": {
+        "phys": "108-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "99": {
+        "phys": "508-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "131": {
+        "phys": "L4",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "163": {
+        "phys": "Cher2",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "4": {
+        "phys": "109-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "36": {
+        "phys": "509-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "68": {
+        "phys": "109-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "100": {
+        "phys": "509-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "132": {
+        "phys": "L5",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "164": {
+        "phys": "Cher3",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "5": {
+        "phys": "110-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "37": {
+        "phys": "510-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "69": {
+        "phys": "110-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "101": {
+        "phys": "510-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "133": {
+        "phys": "L6",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "6": {
+        "phys": "111-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "38": {
+        "phys": "511-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "70": {
+        "phys": "111-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "102": {
+        "phys": "511-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "134": {
+        "phys": "L7",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "7": {
+        "phys": "112-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "39": {
+        "phys": "512-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "71": {
+        "phys": "112-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "103": {
+        "phys": "512-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "135": {
+        "phys": "L8",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "8": {
+        "phys": "113-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "40": {
+        "phys": "513-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "72": {
+        "phys": "113-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "104": {
+        "phys": "513-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "136": {
+        "phys": "L9",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "9": {
+        "phys": "114-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "41": {
+        "phys": "514-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "73": {
+        "phys": "114-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "105": {
+        "phys": "514-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "137": {
+        "phys": "L10",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "10": {
+        "phys": "202-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "42": {
+        "phys": "402-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "74": {
+        "phys": "202-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "106": {
+        "phys": "402-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "138": {
+        "phys": "L11",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "11": {
+        "phys": "203-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "43": {
+        "phys": "403-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "75": {
+        "phys": "203-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "107": {
+        "phys": "403-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "139": {
+        "phys": "L12",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "12": {
+        "phys": "204-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "44": {
+        "phys": "404-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "76": {
+        "phys": "204-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "108": {
+        "phys": "404-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "140": {
+        "phys": "L13",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "13": {
+        "phys": "205-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "45": {
+        "phys": "405-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "77": {
+        "phys": "205-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "109": {
+        "phys": "405-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "141": {
+        "phys": "L14",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "14": {
+        "phys": "206-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "46": {
+        "phys": "406-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "78": {
+        "phys": "206-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "110": {
+        "phys": "406-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "142": {
+        "phys": "L15",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "15": {
+        "phys": "207-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "47": {
+        "phys": "407-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "79": {
+        "phys": "207-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "111": {
+        "phys": "407-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "143": {
+        "phys": "L16",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "16": {
+        "phys": "208-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "48": {
+        "phys": "408-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "80": {
+        "phys": "208-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "112": {
+        "phys": "408-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "17": {
+        "phys": "209-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "49": {
+        "phys": "409-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "81": {
+        "phys": "209-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "113": {
+        "phys": "409-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "18": {
+        "phys": "210-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "50": {
+        "phys": "410-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "82": {
+        "phys": "210-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "114": {
+        "phys": "410-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "19": {
+        "phys": "211-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "51": {
+        "phys": "411-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "83": {
+        "phys": "211-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "115": {
+        "phys": "411-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "20": {
+        "phys": "212-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "52": {
+        "phys": "412-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "84": {
+        "phys": "212-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "116": {
+        "phys": "412-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "21": {
+        "phys": "213-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "53": {
+        "phys": "413-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "85": {
+        "phys": "213-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "117": {
+        "phys": "413-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "22": {
+        "phys": "214-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "54": {
+        "phys": "414-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "86": {
+        "phys": "214-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "118": {
+        "phys": "414-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "23": {
+        "phys": "215-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "55": {
+        "phys": "415-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "87": {
+        "phys": "215-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "119": {
+        "phys": "415-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "24": {
+        "phys": "216-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "56": {
+        "phys": "416-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "88": {
+        "phys": "216-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "120": {
+        "phys": "416-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "25": {
+        "phys": "217-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "57": {
+        "phys": "417-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "89": {
+        "phys": "217-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "121": {
+        "phys": "417-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "26": {
+        "phys": "301-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "58": {
+        "phys": "314-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "90": {
+        "phys": "301-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "122": {
+        "phys": "314-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "27": {
+        "phys": "302-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "59": {
+        "phys": "315-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "91": {
+        "phys": "302-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "123": {
+        "phys": "315-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "28": {
+        "phys": "303-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "60": {
+        "phys": "316-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "92": {
+        "phys": "303-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "124": {
+        "phys": "316-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "29": {
+        "phys": "304-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "61": {
+        "phys": "317-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "93": {
+        "phys": "304-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "125": {
+        "phys": "317-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "30": {
+        "phys": "305-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "62": {
+        "phys": "318-S",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "94": {
+        "phys": "305-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    },
+    "126": {
+        "phys": "318-C",
+        "pedestal": 150,
+        "monthreshold": 150
+    }
+}

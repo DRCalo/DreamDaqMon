@@ -1,737 +1,702 @@
 {
     "0": {
         "phys": "105-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "31": {
 	"phys": "preshower",
-	"pedestal": 150,
-	"monthreshold": 150
+	"pedestal": 0,
+	"monthreshold": 0
     },
     "63": {
 	"phys": "veto",
-	"pedestal": 150,
-	"monthreshold": 150
+	"pedestal": 0,
+	"monthreshold": 0
     },
     "32": {
         "phys": "505-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "64": {
         "phys": "105-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "96": {
         "phys": "505-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "128": {
-        "phys": "L1",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L2",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "160": {
         "phys": "TailCatcher",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "1": {
         "phys": "106-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "33": {
         "phys": "506-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "65": {
         "phys": "106-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "97": {
         "phys": "506-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "129": {
-        "phys": "L2",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L3",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "161": {
         "phys": "Muon",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "2": {
         "phys": "107-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "34": {
         "phys": "507-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "66": {
         "phys": "107-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "98": {
         "phys": "507-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "130": {
-        "phys": "L3",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L4old",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "162": {
         "phys": "Cher1",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "3": {
         "phys": "108-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "35": {
         "phys": "508-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "67": {
         "phys": "108-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "99": {
         "phys": "508-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "131": {
-        "phys": "L4",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L5",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "163": {
         "phys": "Cher2",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "4": {
         "phys": "109-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "36": {
         "phys": "509-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "68": {
         "phys": "109-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "100": {
         "phys": "509-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "132": {
-        "phys": "L5",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L7",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "164": {
         "phys": "Cher3",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "5": {
         "phys": "110-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "37": {
         "phys": "510-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "69": {
         "phys": "110-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "101": {
         "phys": "510-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "133": {
-        "phys": "L6",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L8",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "6": {
         "phys": "111-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "38": {
         "phys": "511-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "70": {
         "phys": "111-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "102": {
         "phys": "511-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "134": {
-        "phys": "L7",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L9",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "7": {
         "phys": "112-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "39": {
         "phys": "512-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "71": {
         "phys": "112-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "103": {
         "phys": "512-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "135": {
-        "phys": "L8",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L10",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "8": {
         "phys": "113-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "40": {
         "phys": "513-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "72": {
         "phys": "113-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "104": {
         "phys": "513-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "136": {
-        "phys": "L9",
-        "pedestal": 150,
-        "monthreshold": 150
+        "phys": "L4",
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "9": {
         "phys": "114-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "41": {
         "phys": "514-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "73": {
         "phys": "114-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "105": {
         "phys": "514-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "137": {
-        "phys": "L10",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "10": {
         "phys": "202-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "42": {
         "phys": "402-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "74": {
         "phys": "202-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "106": {
         "phys": "402-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "138": {
-        "phys": "L11",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "11": {
         "phys": "203-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "43": {
         "phys": "403-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "75": {
         "phys": "203-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "107": {
         "phys": "403-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "139": {
-        "phys": "L12",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "12": {
         "phys": "204-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "44": {
         "phys": "404-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "76": {
         "phys": "204-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "108": {
         "phys": "404-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "140": {
-        "phys": "L13",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "13": {
         "phys": "205-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "45": {
         "phys": "405-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "77": {
         "phys": "205-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "109": {
         "phys": "405-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "141": {
-        "phys": "L14",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "14": {
         "phys": "206-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "46": {
         "phys": "406-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "78": {
         "phys": "206-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "110": {
         "phys": "406-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "142": {
-        "phys": "L15",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "15": {
         "phys": "207-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "47": {
         "phys": "407-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "79": {
         "phys": "207-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "111": {
         "phys": "407-C",
-        "pedestal": 150,
-        "monthreshold": 150
-    },
-    "143": {
-        "phys": "L16",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "16": {
         "phys": "208-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "48": {
         "phys": "408-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "80": {
         "phys": "208-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "112": {
         "phys": "408-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "17": {
         "phys": "209-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "49": {
         "phys": "409-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "81": {
         "phys": "209-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "113": {
         "phys": "409-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "18": {
         "phys": "210-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "50": {
         "phys": "410-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "82": {
         "phys": "210-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "114": {
         "phys": "410-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "19": {
         "phys": "211-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "51": {
         "phys": "411-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "83": {
         "phys": "211-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "115": {
         "phys": "411-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "20": {
         "phys": "212-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "52": {
         "phys": "412-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "84": {
         "phys": "212-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "116": {
         "phys": "412-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "21": {
         "phys": "213-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "53": {
         "phys": "413-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "85": {
         "phys": "213-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "117": {
         "phys": "413-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "22": {
         "phys": "214-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "54": {
         "phys": "414-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "86": {
         "phys": "214-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "118": {
         "phys": "414-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "23": {
         "phys": "215-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "55": {
         "phys": "415-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "87": {
         "phys": "215-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "119": {
         "phys": "415-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "24": {
         "phys": "216-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "56": {
         "phys": "416-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "88": {
         "phys": "216-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "120": {
         "phys": "416-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "25": {
         "phys": "217-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "57": {
         "phys": "417-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "89": {
         "phys": "217-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "121": {
         "phys": "417-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "26": {
         "phys": "301-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "58": {
         "phys": "314-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "90": {
         "phys": "301-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "122": {
         "phys": "314-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "27": {
         "phys": "302-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "59": {
         "phys": "315-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "91": {
         "phys": "302-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "123": {
         "phys": "315-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "28": {
         "phys": "303-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "60": {
         "phys": "316-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "92": {
         "phys": "303-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "124": {
         "phys": "316-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "29": {
         "phys": "304-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "61": {
         "phys": "317-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "93": {
         "phys": "304-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "125": {
         "phys": "317-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "30": {
         "phys": "305-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "62": {
         "phys": "318-S",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "94": {
         "phys": "305-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     },
     "126": {
         "phys": "318-C",
-        "pedestal": 150,
-        "monthreshold": 150
+        "pedestal": 0,
+        "monthreshold": 0
     }
 }

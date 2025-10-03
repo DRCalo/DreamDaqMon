@@ -90,7 +90,7 @@
         "monthreshold": 0
     },
     "130": {
-        "phys": "L4old",
+        "phys": "L4",
         "pedestal": 0,
         "monthreshold": 0
     },
@@ -180,7 +180,7 @@
         "monthreshold": 0
     },
     "133": {
-        "phys": "L8",
+        "phys": "L8old",
         "pedestal": 0,
         "monthreshold": 0
     },
@@ -255,7 +255,7 @@
         "monthreshold": 0
     },
     "136": {
-        "phys": "L4",
+        "phys": "L8",
         "pedestal": 0,
         "monthreshold": 0
     },

@@ -111,28 +111,37 @@ def DRdecode24(evLine):
 def DRdecode25(evLine, verbose, dumperror):
   """Function that converts a raw data record (event) from
      ascii to object oriented representation: DREvent class"""
+
+  #verbose = -1: print message only for discarded events
+  #verbose = 0: print message for every decoding error
+  #verbose = 1: print message for every decoding error and pass verbosity to "decodeblock"
+  
   # Create new DREvent
   e = DREvent()
 
-  valid, header, adc, tdc = bob.decodeblock(evLine, verbose)
+  blockverbose = verbose > 0
+  valid, header, adc, tdc = bob.decodeblock(evLine, blockverbose)
+
+  discard = bob.DiscardEvent(valid)
 
   if valid and dumperror != None:
     delimiter = "----------------"
-    errors = "\n".join(["ID %d : %s"%(v, bob.DecErr[v]) for v in valid])
-    discard = str(bob.DiscardEvent(valid))
+    errors = "\n".join([bob.ets(v) for v in valid])
     try:
       evtnumber = header["evtnumber"]
     except:
       evtnumber = -1
-    dump = u"%s\n%s\nEvent %d\n%s\nDiscard %s\n%s\n%s\n%s\n%s\n" %(
+    dump = u"%s\n%s\nEvent %d\n%s\nDiscard %s\n%s\n%s\n%d adc %s\n%d tdc %s\n" %(
       delimiter,
       time.ctime(),
       evtnumber,
       errors,
-      discard,
+      str(discard),
       evLine,
       str(header),
+      len(adc),
       str(adc),
+      len(tdc),
       str(tdc)
       )
     with open(dumperror, "a", encoding="utf-8") as fdump:
@@ -143,13 +152,16 @@ def DRdecode25(evLine, verbose, dumperror):
     try:
       evtnumber = header["evtnumber"]
     except:
-      evtnumber = 0
-    print("Evt %d - found decoding errors - %d ADCs %d TDCs decoded" %(evtnumber, len(adc), len(tdc)))
-    for v in valid:
-      print("Evt %d - error id %d: %s" %(evtnumber, v, bob.DecErr[v]))
-    if bob.DiscardEvent(valid):
+      evtnumber = -1
+    if discard or verbose > -1:
+      print("Evt %d - found decoding errors - %d ADCs %d TDCs decoded" %(evtnumber, len(adc), len(tdc)))
+      for v in valid:
+        print("Evt %d - error %s" %(evtnumber, bob.ets(v)))
+    if discard:
       print("Evt %d - discarding, returning None as event" %(evtnumber))
-      return None
+
+  if discard:
+    return None
 
   # Parse header
   e.EventNumber = int( header["evtnumber"] )
@@ -173,12 +185,12 @@ def DRdecode25(evLine, verbose, dumperror):
   return e
 
 # Wrapper for compatibility with two data format
-def DRdecode(evLine, spec='2025', verbose = False, dumperror = None):
+def DRdecode(evLine, spec='2025', verbose = -1, dumperror = None):
 
   if spec == '2025':
     return DRdecode25(evLine, verbose, dumperror)
   else:
-    if verbose:
+    if verbose != -1:
       print('WARNING - Verbosity implemented only for 2025 data format')
     if dumperror != None:
       print('WARNING - Dump of corrupted data implemented only for 2025 data format')
@@ -193,11 +205,11 @@ if __name__ == "__main__":
     sys.exit(1)
  
   verboseHead = False
-  verboseEvt = False
+  verboseEvt = 0
   if len(sys.argv) == 3:
     verboseHead = True
     if str(sys.argv[2]) == 'vv':
-      verboseEvt = True
+      verboseEvt = 1
   for i, line in enumerate( open( sys.argv[1] ) ):
     n = time.time()
     ev = DRdecode(line, spec = '2025', verbose=verboseEvt, dumperror="drevent_error_dump.txt")
@@ -206,6 +218,6 @@ if __name__ == "__main__":
       adcs = len(ev.ADCs)
       tdcs = len(ev.TDCs)
       tdcs_good = len([t for t in ev.TDCs if ev.TDCs[t][1]])
-      print("--> (Event Header) Line %d - Event %d Spill %d Trig %d - %d %d (%d) - decoding time ms %f"%(i, ev.EventNumber, ev.SpillNumber, ev.TriggerMask, adcs, tdcs, tdcs_good, dt))
+      print("--> (Event Summary) Line %d - Event %d Spill %d Trig %d - %d %d (%d) - decoding time ms %f"%(i, ev.EventNumber, ev.SpillNumber, ev.TriggerMask, adcs, tdcs, tdcs_good, dt))
 
 

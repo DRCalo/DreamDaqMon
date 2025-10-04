@@ -20,3 +20,6 @@ Data monitor for DreamDaq
 
 ## Other utilities
 - `watch_daq.py` can be used to watch and decode new files written synchronously in a configurable directory path. It prints meaningful information on screen and it dumps events with errors. It works in python3 only
+
+### 2025 Monitoring
+- Software updated in `python2/DrMon.py`, but stil based on 2023 code. Before starting, make sure to have `channels2025tdc.json` and `channels2025adc.json` in the `python2/` directory.

@@ -17,7 +17,7 @@ def decoder(line: str, linecount, runnumber, nphys, nped, noth, ndisc):
     if ev == None:
         print(f"Run {runnumber} line {linecount} - Event discarded")
         return nphys, nped, noth, ndisc+1
-    if ev.TriggerMask == 0x5:
+    if ev.TriggerMask == 0x1:
         nphys_ += 1
     elif True:
         nped_ += 1

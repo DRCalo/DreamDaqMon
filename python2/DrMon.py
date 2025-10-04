@@ -7,9 +7,13 @@ import glob
 import os
 import re
 import commands
+import json
+
 
 PathToData='/home/dreamtest/SPS.2023.06/'
 PathToLogs='/home/dreamtest/logs/'
+PathToMappingADC='./channels2025adc.json'
+PathToMappingTDC='./channels2025tdc.json'
 BLUBOLD='\033[94m\033[1m'
 BOLD   ='\033[1m'
 BLU    ='\033[94m'
@@ -17,8 +21,8 @@ RED    ='\033[31m'
 NOCOLOR='\033[0m'
 
 # CONFIGURATION
-NumAdcChannels = 96
-NumTdcChannels = 48
+NumAdcChannels = 192
+NumTdcChannels = 16 
 ns_TdcCounts   = 0.139063
 ns_mm          = 5.333333  
 mm_ns          = 1./ns_mm
@@ -33,6 +37,34 @@ def handler(signal_rcv, frame):
   stop=True
 
 
+
+#################
+# IMPORT AND HANDLE MAPPING
+################
+MAPADC = {}
+with open(PathToMappingADC, "r") as f:
+  MAPADC = json.load(f)
+MAPADC = dict((int(ch) , MAPADC[ch]) for ch in MAPADC.keys())
+
+MAPTDC = {}
+with open(PathToMappingTDC, "r") as f:
+  MAPTDC = json.load(f)
+MAPTDC = dict((int(ch) , MAPTDC[ch]) for ch in MAPTDC.keys())
+
+
+def isPMT(ch):
+  return bool(int(ch) < 128)
+
+def getChannel(phys):
+  for ch, pl in MAPADC.items():
+    if pl["phys"] == phys:
+      return int(ch)
+  return -1
+
+
+
+
+  
 #################################################################
 ### DrMon CLASS #################################################
 #################################################################
@@ -58,16 +90,14 @@ class DrMon:
     if len(tmp) != 0:
       self.runNum = tmp[-1]
     self.cmdShCuts  = {        # Mapping between command shortCuts and commands
-       "pmtMapC"    : self.DrawPmtAdcMapC, 
-       "pmtMapS"    : self.DrawPmtAdcMapS,  
-       "fers"       : self.DrawFers,
-       "beam"       : self.DrawDwcBeamProfile, 
-       "beam_mm"    : self.DrawDwcBeamProfile_mm,
-       "dwcTDCs"    : self.DrawDwcTDCs,
-       "caloPos"    : self.DrawCaloCenterOfGravity,
-       "caloTot"    : self.DrawTotalEnergyInCalo,
-       "MuonOverPre": self.DrawMuonOverPre,
-       "PmtHitMaps" : self.PmtHitMaps,
+       "pmtMapC"      : self.DrawPmtAdcMapC, 
+       "pmtMapS"      : self.DrawPmtAdcMapS,  
+       "fers"         : self.DrawFers,
+       "beam"         : self.DrawDwcBeamProfile, 
+       "beam_mm"      : self.DrawDwcBeamProfile_mm,
+       "dwcTDCs"      : self.DrawDwcTDCs,
+       "caloTot"      : self.DrawTotalEnergyInCalo,
+       "PmtHeatMaps"  : self.PmtHitMaps,
     }
     self.cmdShCutsV = list(self.cmdShCuts)
     self.NumOfLinesOfThisFile()
@@ -76,27 +106,27 @@ class DrMon:
   ##### DrMon method #######
   def histoMapping(self):	
     '''Create the histo mapping dictionary '''
-    # TDC
-    for i in range(1, 9):
-      self.histoMap[ "tdc-C%d" % i ] = "tdc-%02d" % (i + 31)   # ch 32-29
-    for i in range(1, 9):
-      self.histoMap[ "tdc-S%d" % i ] = "tdc-%02d" % (i + 39)   # ch 40-47
-
+    
     # ADC
-    for i in range(1, 9):
-      self.histoMap[ "adc-C%d" % i ] = "adc-%02d" % (i - 1)
-    for i in range(1, 9):
-      self.histoMap[ "adc-S%d" % i ] = "adc-%02d" % (i + 7)
+    existingadcchannels = sorted(MAPADC.keys())
+    for ch in existingadcchannels:  
+      self.histoMap[ MAPADC[ch]["phys"] ] = "adc-%03d" % (ch)
 
-    # FERS
-    for i in range(0, 5):
-      self.histoMap[ "fers-%d" % i ] = "tdc-%02d" % (i + 8)
+    existingadcchannels = sorted(MAPTDC.keys())
+    for ch in existingadcchannels:  
+      self.histoMap[ MAPTDC[ch]["phys"] ] = "tdc-%03d" % (ch)
 
-    self.histoMap[ "MuonTrk" ] = "adc-32"
-    self.histoMap[ "Cheren1" ] = "adc-33"
-    self.histoMap[ "Cheren2" ] = "adc-36"
-    self.histoMap[ "Cheren3" ] = "adc-35"
-    self.histoMap[ "PreShow" ] = "adc-16"
+    # TDC
+    #existingtdcchannels = existingadcchannels
+    #for ch in existingtdcchannels:
+    #  if isPMT(ch):
+    #    self.histoMap[ "%s-tdc" %(MAP[ch]["phys"])  ] = "tdc-%03d" % (ch)
+
+    
+    ## FERS
+    #for i in range(0, 5):
+    #  self.histoMap[ "fers-%d" % i ] = "tdc-%03d" % (i + 8)
+
     
   ##### DrMon method #######
   def NumOfLinesOfThisFile(self):
@@ -146,23 +176,17 @@ class DrMon:
   def bookAdcHistos(self, bins):
     '''Book ADC histograms '''
     for i in range(NumAdcChannels):
-      hname  = "adc-%02d" % i
-      self.book1D( "adc-%02d" % i, bins, 0, 4096, 'adcCounts')
+      hname  = "adc-%03d" % i
+      self.book1D( "adc-%03d" % i, bins, 0, 4096, 'adcCounts')
 
-    # Histograms to monitor CALO position
-    for kind in ("C", "S"):
-      for ax in ("X", "Y"):
-        hname = "calo%s_%s" % (kind, ax)
-        htitl = "Calo %s center of gravity using %s fibers" % (ax, kind) 
-        self.book1D( hname, 160, -80, 80, 'adcCounts')
     
     # Total energy
-    self.book1D( "PmtTotC",  bins, 0, 4096, 'adcCounts')
-    self.book1D( "PmtTotS",  bins, 0, 4096, 'adcCounts')
-    self.book2D( "PmtTotSC", bins, 0, 4096, 'S [adcCounts]', 'C [adcCounts]')
+    self.book1D( "PmtTotC",  bins, 0, 4096*10, 'adcCounts')
+    self.book1D( "PmtTotS",  bins, 0, 4096*10, 'adcCounts')
+    self.book2D( "PmtTotSC", bins, 0, 4096*10, 'S [adcCounts]', 'C [adcCounts]')
     
-    self.book2D( "HitMap_S", 3, -1.5, 1.5, 'tower', 'tower')
-    self.book2D( "HitMap_C", 3, -1.5, 1.5, 'tower', 'tower')
+    self.book2D( "HitMap_S", 5, 1, 6, 'tower column', 'tower row', 18, 1, 19)
+    self.book2D( "HitMap_C", 5, 1, 6, 'tower column', 'tower row', 18, 1, 19)
     
     print "Booked ADCs histograms"
 
@@ -170,7 +194,7 @@ class DrMon:
   def bookTdcHistos(self, bins):
     '''Book TDC histograms '''
     for i in range(NumTdcChannels):
-      hname = "tdc-%02d" % i
+      hname = "tdc-%03d" % i
       htitle = hname
       if i==0 or i==4: htitle = htitle + " DWC" + str(i/4+1)+ " left"
       if i==1 or i==5: htitle = htitle + " DWC" + str(i/4+1)+ " right"
@@ -212,17 +236,9 @@ class DrMon:
   def bookOthers(self):
     '''Book others histograms '''
     self.book1D( "trMask", 8, -0.5, 7.5)
-    self.book2D( "pre/muon", 4096, 0, 4096, "preshower [adcCounts]",  "muonTraker [adcCounts]")
     self.book2D( "chere1/2", 4096, 0, 4096, "Cherenkov1 [adcCounts]", "Cherenkov2 [adcCounts]")
-    self.book2D( "chere1/pre", 4096, 0, 4096, "Cherenkov1 [adcCounts]", "PreShower [adcCounts]")
-    self.book2D( "chere2/pre", 4096, 0, 4096, "Cherenkov2 [adcCounts]", "PreShower [adcCounts]")
-    self.book2D( "pre/x1", 4096, 0, 4096, "PreShower [adcCounts]", "x1 [mm]", 60,-30,30)
-    self.book2D( "pre/x2", 4096, 0, 4096, "PreShower [adcCounts]", "x2 [mm]", 60,-30,30)
-    self.book2D( "pre/y1", 4096, 0, 4096, "PreShower [adcCounts]", "y1 [mm]", 60,-30,30)
-    self.book2D( "pre/y2", 4096, 0, 4096, "PreShower [adcCounts]", "y2 [mm]", 60,-30,30)
-
-
-     
+   
+  
 
   ##### DrMon method #######
   def SetFillColor(self, col):
@@ -244,33 +260,54 @@ class DrMon:
 
   ##### DrMon method #######
   def hFillPmtHitMapS(self, event):
+
+    if not event.ADCs: # empty events skipped
+      return
+
+    if self.trigCut:
+      if event.TriggerMask != self.trigCut:
+        return
+      
     adc = event.ADCs
     h = self.hDict['HitMap_S']
-    if adc[15] > 210: h.Fill(-1, 1)
-    if adc[14] > 210: h.Fill( 0, 1)
-    if adc[13] > 170: h.Fill( 1, 1)
-    if adc[12] > 234: h.Fill(-1, 0)
-    if adc[11] > 226: h.Fill( 1, 0)
-    if adc[10] > 246: h.Fill(-1,-1)
-    if adc[ 9] > 195: h.Fill( 0,-1)
-    if adc[ 8] > 220: h.Fill( 1,-1)
+    for ch in MAPADC.keys():
+      if isPMT(ch) and '-S' in MAPADC[ch]["phys"]:
+        towername = MAPADC[ch]["phys"]
+        col = int(towername[0])
+        row = int(towername[1:3])
+        if adc[ch] > MAPADC[ch]["monthreshold"]:
+          h.Fill(col, row, adc[ch])
+          
+   
 
   ##### DrMon method #######
   def hFillPmtHitMapC(self, event):
+
+    if not event.ADCs: # empty events skipped
+      return
+
+    if self.trigCut:
+      if event.TriggerMask != self.trigCut:
+        return
+
+      
     adc = event.ADCs
     h = self.hDict['HitMap_C']
-    if adc[ 7] > 178: h.Fill(-1, 1)
-    if adc[ 6] > 234: h.Fill( 0, 1)
-    if adc[ 5] > 194: h.Fill( 1, 1)
-    if adc[ 4] > 210: h.Fill(-1, 0)
-    if adc[ 3] > 242: h.Fill( 1, 0)
-    if adc[ 2] > 230: h.Fill(-1,-1)
-    if adc[ 1] > 250: h.Fill( 0,-1)
-    if adc[ 0] > 250: h.Fill( 1,-1)
+    for ch in MAPADC.keys():
+      if isPMT(ch) and '-C' in MAPADC[ch]["phys"]:
+        towername = MAPADC[ch]["phys"]
+        col = int(towername[0])
+        row = int(towername[1:3])
+        if adc[ch] > MAPADC[ch]["monthreshold"]:
+          h.Fill(col, row, adc[ch])
+          
 
   ##### DrMon method #######
   def hFill(self, event):
     '''Fill the histogram '''
+
+    if not event.ADCs: # empty events skipped
+      return
 
     if self.trigCut:
       if event.TriggerMask != self.trigCut:
@@ -278,49 +315,44 @@ class DrMon:
     
     # Others
     self.hDict["trMask"].Fill(event.TriggerMask)
-    self.hDict["pre/muon"].Fill( event.ADCs[16],  event.ADCs[32])
-    self.hDict["chere1/2"].Fill( event.ADCs[33],  event.ADCs[36])
-    self.hDict["chere1/pre"].Fill( event.ADCs[33],  event.ADCs[16])
-    self.hDict["chere2/pre"].Fill( event.ADCs[36],  event.ADCs[16])
+    chere1chan = getChannel("Cher1")
+    chere2chan = getChannel("Cher2")
+    if chere1chan in event.ADCs and chere2chan in event.ADCs:
+      self.hDict["chere1/2"].Fill( event.ADCs[chere1chan],  event.ADCs[chere2chan])
 
     # ADC
     for ch, val in event.ADCs.items():
-      hname  = "adc-%02d" % ch
-      self.hDict[hname].Fill(val)
-    
+      try:
+        hname  = "adc-%03d" % ch
+        self.hDict[hname].Fill(val)
+      except:
+        print('COULDNT FILL hDict',hname,ch)
+        
     self.hFillPmtHitMapS(event)
     self.hFillPmtHitMapC(event)
   
-    # Center of gravity
+    
     adc=event.ADCs 
-    if event.TriggerMask & 0x1:
-      # Calorimeter position Scintillator fibers
-      x = self.centerOfGravity(35, ( adc[10], adc[12], adc[15] ), ( adc[ 8], adc[11], adc[13] ) )
-      y = self.centerOfGravity(35, ( adc[10], adc[ 9], adc[ 8] ), ( adc[15], adc[14], adc[13] ) )
-      if x != None and y != None: 
-        self.hDict["caloS_X"].Fill(x)
-        self.hDict["caloS_Y"].Fill(y)
-
-      # Calorimeter position Cherenkov fibers
-      x = self.centerOfGravity(35, ( adc[2], adc[4], adc[7] ), ( adc[0], adc[3], adc[5] ) )
-      y = self.centerOfGravity(35, ( adc[2], adc[1], adc[0] ), ( adc[7], adc[6], adc[5] ) )
-      if x != None and y != None: 
-        self.hDict["caloC_X"].Fill(x)
-        self.hDict["caloC_Y"].Fill(y)
-
+    
     # Total
     sumC, sumS = 0, 0
-    for i in range(8):
-      sumC += adc[i]
-      sumS += adc[i+8]
+    for ch in MAPADC.keys():
+      if isPMT(ch) and "-C" in MAPADC[ch]["phys"]:
+        sumC += event.ADCs[ch]
+      if isPMT(ch) and "-S" in MAPADC[ch]["phys"]:
+        sumS += event.ADCs[ch]
     self.hDict["PmtTotS"].Fill(sumS)
     self.hDict["PmtTotC"].Fill(sumC)
     self.hDict["PmtTotSC"].Fill(sumS, sumC)
     
     # TDC
     for ch, val in event.TDCs.items():
-      hname  = "tdc-%02d" % ch
-      self.hDict[hname].Fill(val[0])
+      try:
+        hname  = "tdc-%03d" % ch
+        self.hDict[hname].Fill(val[0])
+      except:
+        print('COULDNT FILL hDict', hname)
+
     self.hDict["tdc_sz"].Fill(len(event.TDCs))
  
     # DWC: 
@@ -356,11 +388,6 @@ class DrMon:
       self.hDict['dwx1-x2' ].Fill(x1*k - x2*k)
       self.hDict['dwy1-y2' ].Fill(y1*k - y2*k)
 
-    if (k != None):
-      self.hDict['pre/x1'].Fill( event.ADCs[16], x1*k)
-      self.hDict['pre/y1'].Fill( event.ADCs[16], y1*k)
-      self.hDict['pre/x2'].Fill( event.ADCs[16], x2*k)
-      self.hDict['pre/y2'].Fill( event.ADCs[16], y2*k)
      
 
   ##### DrMon method #######
@@ -376,7 +403,9 @@ class DrMon:
       if i < offset: continue
       self.lastLine = i
       if i%self.sample==0:
-        ev = DREvent.DRdecode(line) 
+        ev = DREvent.DRdecode(line)
+        if ev == None:
+          continue
         if i==0:
           print ev.headLine()
         if i%step==0: print ev
@@ -389,7 +418,7 @@ class DrMon:
   def dumpHelp(self):
     '''Write the list of available histograms'''
     print BLU,; print "Available histograms:", NOCOLOR
-    l = sorted(self.hDict.keys()) 
+    l = sorted(self.hDict.keys())
     lTdc =  [x for x in l if x.startswith("tdc-")]
     lAdc =  [x for x in l if x.startswith("adc-")]
     lOth =  [x for x in l if not x.startswith("adc-") and not x.startswith("tdc-") ]
@@ -473,19 +502,9 @@ class DrMon:
       self.createCanvas(8)
     for i in range (8):
       self.canvas.cd(i+1);
-      self.hDict[ "tdc-%02d" % i ].Draw()
+      self.hDict[ "tdc-%03d" % i ].Draw()
     self.canvas.Update()
 
-  ##### DrMon method #######
-  def DrawMuonOverPre(self, opt=""):
-    '''Draw the muonTraker histo over preShower one'''
-    if self.canNum != 1:
-      self.createCanvas(1)
-    hp = self.hDict[ self.histoMap["PreShow"] ]
-    hm = self.hDict[ self.histoMap["MuonTrk"] ]
-    hp.SetFillColor(42); hp.Draw()
-    hm.SetFillColor(45); hm.Draw("same")
-    self.canvas.Update()
 
   ##### DrMon method #######
   def DrawDwcBeamProfile(self, opt=""):
@@ -531,7 +550,7 @@ class DrMon:
     for i in range(1,10):
       if i == 5: continue
       self.canvas.cd(i)
-      self.hDict[ "adc-%02d" % ch ].Draw()
+      self.hDict[ "adc-%03d" % ch ].Draw()
       ch -= 1
     self.canvas.Update()
   
@@ -549,20 +568,10 @@ class DrMon:
     for i in range(1,10):
       if i == 5: continue
       self.canvas.cd(i)
-      self.hDict[ "adc-%02d" % ch ].Draw()
+      self.hDict[ "adc-%03d" % ch ].Draw()
       ch -= 1
     self.canvas.Update()
   
-  ##### DrMon method #######
-  def DrawCaloCenterOfGravity(self, opt=""):
-    '''Draw histograms about calorimeter center of gravity'''
-    if self.canNum != 4:
-      self.createCanvas(4)
-    self.canvas.cd(1); self.hDictDrawAndFit( "caloS_X" )
-    self.canvas.cd(2); self.hDictDrawAndFit( "caloS_Y" ) 
-    self.canvas.cd(3); self.hDictDrawAndFit( "caloC_X" ) 
-    self.canvas.cd(4); self.hDictDrawAndFit( "caloC_Y" ) 
-    self.canvas.Update()
   
   ##### DrMon method #######
   def DrawTotalEnergyInCalo(self, opt=""):
@@ -740,6 +749,7 @@ signal(SIGINT, handler)
 
 print 'Analyzing', fname
 drMon = DrMon(fname, events, sample, trigCut)
+print(trigCut)
 drMon.bookAdcHistos(512)
 drMon.bookTdcHistos(512)
 drMon.bookDwcHistos(512)
